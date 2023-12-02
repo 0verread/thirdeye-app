@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "src/trpc/react";
 import { cn } from "src/lib/utils";
+import Header from "./_components/header";
 
 export const metadata = {
   title: "Third Eye",
@@ -19,8 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${GeistSans.className} ${cn("container bg-background antialiased my-4 flex flex-col gap-4")}`}
-      >           <TRPCReactProvider cookies={cookies().toString()}>
+        className={`${GeistSans.className} ${cn(
+          "bg-background container my-4 flex flex-col gap-4 antialiased",
+        )}`}
+      >
+        {" "}
+        <TRPCReactProvider cookies={cookies().toString()}>
+          <Header />
           {children}
         </TRPCReactProvider>
       </body>
