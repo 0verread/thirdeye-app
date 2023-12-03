@@ -22,8 +22,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "src/components/ui/popover";
+import { uuid } from "src/lib/utils";
 
 const CreateProject = () => {
+  const utils = api.useUtils();
   const CreateProjectSchema = z.object({
     name: z.string().min(2, {
       message: "Name must be at least 2 characters long",
@@ -36,30 +38,43 @@ const CreateProject = () => {
     resolver: zodResolver(CreateProjectSchema),
     defaultValues: {
       name: "",
-      key: "",
+      key: uuid(),
     },
   });
 
-  const createProject = api.project.create.useMutation();
+  const createProject = api.project.create.useMutation({
+    onMutate: (data) => {
+      toast({
+        title: "Creating project...",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          </pre>
+        ),
+        duration: 2000,
+      });
+    },
+    onSettled: (data, error) => {
+      toast({
+        title: "Project created!",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          </pre>
+        ),
+        duration: 2000,
+      });
+    },
+    onSuccess: () => {
+      utils.project.list.invalidate();
+    },
+  });
 
   const onCreateProjectSubmit = async (
     data: z.infer<typeof CreateProjectSchema>,
   ) => {
     try {
-      const newProject = await createProject.mutateAsync(data);
-
-      if (newProject.id) {
-        toast({
-          title: "Project Created",
-          description: (
-            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-              <code className="text-white">
-                {JSON.stringify(data, null, 2)}
-              </code>
-            </pre>
-          ),
-        });
-      }
+      await createProject.mutateAsync(data);
     } catch (e) {}
   };
 
@@ -84,23 +99,6 @@ const CreateProject = () => {
                     <Input placeholder="Third Eye" {...field} />
                   </FormControl>
                   <FormDescription>The name of your project.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={createProjectForm.control}
-              name="key"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Key</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Third Eye App Key" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    The key for your project. This is used to identify your
-                    project when logging events.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

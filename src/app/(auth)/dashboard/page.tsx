@@ -6,11 +6,9 @@ import {
   CardTitle,
 } from "src/components/ui/card";
 import CreateProject from "./_components/create-project";
-import { api } from "src/trpc/server";
 import Projects from "./_components/projects";
 
-const DashboardPage = async () => {
-  const projects = await api.project.list.query();
+const DashboardPage = () => {
   return (
     <Card>
       <CardHeader>
@@ -22,11 +20,9 @@ const DashboardPage = async () => {
       <CardContent className="fle flex-col gap-4">
         <CreateProject />
       </CardContent>
-      {projects.length > 0 && (
-        <CardContent>
-          <Projects projects={projects} />
-        </CardContent>
-      )}
+      <CardContent>
+        <Projects />
+      </CardContent>
     </Card>
   );
 };
