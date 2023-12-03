@@ -27,22 +27,36 @@ const ProjectIdPage = async ({ params }: { params: { projectId: string } }) => {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Table>
-          <TableCaption>A list of your recent invoices.</TableCaption>
+          <TableCaption>
+            Logs of all the events that happened in this project
+          </TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead></TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Key</TableHead>
+              <TableHead>Status Code</TableHead>
+              <TableHead>Api Endpoint</TableHead>
+              <TableHead>Payload</TableHead>
               <TableHead>Method</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>Custom Msg (optional)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">INV001</TableCell>
-              <TableCell>Paid</TableCell>
-              <TableCell>Credit Card</TableCell>
-              <TableCell className="text-right">$250.00</TableCell>
-            </TableRow>
+            {project.logs.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6}>No logs yet</TableCell>
+              </TableRow>
+            ) : (
+              project.logs.map((log) => (
+                <TableRow key={log.id}>
+                  <TableCell>{log.key}</TableCell>
+                  <TableCell>{log.statusCode}</TableCell>
+                  <TableCell>{log.apiEndpoint}</TableCell>
+                  <TableCell>{log.payload}</TableCell>
+                  <TableCell>{log.method}</TableCell>
+                  <TableCell>{log.customMsg}</TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </CardContent>

@@ -58,11 +58,15 @@ export const projectRouter = createTRPCRouter({
         });
       }
 
-      // Fake slow query
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const project = await ctx.db.project.findUnique({
         where: { id: input.id },
+        include: {
+          logs: {
+            orderBy: {
+              createdAt: "desc",
+            },
+          },
+        },
       });
 
       if (!project) {
