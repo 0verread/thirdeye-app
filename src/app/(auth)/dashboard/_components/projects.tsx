@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Button } from "src/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -22,9 +21,9 @@ const Projects = ({ projects }: { projects: Project[] }) => {
             <CardDescription>{project.key}</CardDescription>
           </CardHeader>
           <CardFooter>
-            <Button>
-              <Link href={`/dashboard/projects/${project.id}`}>View</Link>
-            </Button>
+            <Link href={`/dashboard/project/${project.id}`} className="w-full">
+              <Button className="w-full">View</Button>
+            </Link>
           </CardFooter>
         </Card>
       ))}

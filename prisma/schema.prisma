@@ -92,6 +92,7 @@ model Log {
     statusCode  Int
     apiEndpoint String
     payload     String
+    method      String
     customMsg   String?
     project     Project  @relation(fields: [projectId], references: [id])
     projectId   String

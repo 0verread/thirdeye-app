@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
 import { TRPCClientError } from "@trpc/client";
+import { TRPCError } from "@trpc/server";
 
 export const projectRouter = createTRPCRouter({
   create: protectedProcedure
@@ -40,4 +41,37 @@ export const projectRouter = createTRPCRouter({
       where: { user: { id: ctx.session.user.id } },
     });
   }),
+
+  byId: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { id } = input;
+
+      if (!id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Id is required",
+        });
+      }
+
+      // Fake slow query
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const project = await ctx.db.project.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!project) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Project not found",
+        });
+      }
+
+      return project;
+    }),
 });
